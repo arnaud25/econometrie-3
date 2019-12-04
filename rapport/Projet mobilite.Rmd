@@ -13,6 +13,7 @@ allgre.PB_V2 %>% distinct(id_pers,.keep_all = TRUE)-> allgreI
 
 ```
 
+
 ```{r}
 allgreI$nbd
 allgreI$nbd==0 ->immobile
