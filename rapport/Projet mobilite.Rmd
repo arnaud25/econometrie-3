@@ -1,0 +1,130 @@
+---
+title: "Script immobile"
+author: "Sacha PICCON"
+date: "04/11/2019"
+output: html_document
+---
+
+```{r}
+load("allgre.PB_V2.RData")
+library(tidyverse
+      )
+allgre.PB_V2 %>% distinct(id_pers,.keep_all = TRUE)-> allgreI
+
+```
+
+```{r}
+allgreI$nbd
+allgreI$nbd==0 ->immobile
+library(dummies)
+dummy(immobile) -> immobile
+```
+```{r}
+cbind(allgreI, immobile) -> allgreI
+allgreI %>% select(immobileTRUE, age, VP_DISPO) -> mobilite
+mobilite<-mobilite %>% rename("immobile"="immobileTRUE")
+```
+```{r}
+mobilite$immobile <- factor(mobilite$immobile)
+mobilite$VP_DISPO <- factor(mobilite$VP_DISPO)
+summary(mobilite)
+mob<-factor(mobilite$immobile, levels = c("0","1"), labels = c("mobile","immobile"))
+mobilite %>% cbind(mob)->mobilite
+mobilite %>% select(mob, age, VP_DISPO) %>% 
+  rename("immobile"="mob")->mobilite
+#créer une variable mobilité numérique
+allgreI %>% select(immobileTRUE)->mob3
+cbind(mobilite, mob3)->mobilite
+mobilite %>% 
+  rename("immobile2"="immobileTRUE")->mobilite
+```
+```{r}
+#Construction des stats descriptives
+summary(mobilite)
+
+#Part des immobiles dans l'échantillon
+mobilite %>% 
+  mutate(VP_DISPO1=as.numeric(as.character(VP_DISPO)))->mobilite
+summary(mobilite)
+#construction d'une table indiquant l'immobilité en fonction du nombre de véhicule disponibles
+mobilite %>% 
+  filter(VP_DISPO==0) %>% 
+  mutate(part_immobile0=sum(immobile2)/633)->immobile0
+mobilite %>% 
+  filter(VP_DISPO==1) %>% 
+  mutate(part_immobile0=sum(immobile2)/2599)->immobile1
+mobilite %>% 
+  filter(VP_DISPO==2) %>% 
+  mutate(part_immobile0=sum(immobile2)/3700)->immobile2
+mobilite %>% 
+  filter(VP_DISPO==3) %>% 
+  mutate(part_immobile0=sum(immobile2)/673)->immobile3
+mobilite %>% 
+  filter(VP_DISPO==4) %>% 
+  mutate(part_immobile0=sum(immobile2)/159)->immobile4
+mobilite %>% 
+  filter(VP_DISPO==5) %>% 
+  mutate(part_immobile0=sum(immobile2)/2)->immobile5
+rbind(immobile0,immobile1)->immobile1
+rbind(immobile1, immobile2)->immobile2
+rbind(immobile2, immobile3)->immobile3
+rbind(immobile3, immobile4)->immobile4
+rbind(immobile4, immobile5)->immobile5
+
+mobilite %>% 
+ arrange(VP_DISPO)->mobilite
+immobile5 %>% 
+  select(part_immobile0)->immobile5
+mobilite %>% 
+  cbind(immobile5)->mobilite
+
+
+```
+16.44% de personnes sont immobiles 
+```{r}
+#Construction de graphiques
+mobilite %>% 
+  ggplot(aes(immobile))+geom_bar()+labs(title = "nombre de personne immobile")
+#mobilite %>% ggplot(aes(immobile, color=immobile))+geom_()
+#l'immobilité en fonction des véhicules disponibles
+mobilite %>% 
+  ggplot(aes(VP_DISPO, color=immobile))+geom_bar()+labs(title = "nombre de personne immobile par nombre de véhicule")
+mobilite %>% 
+  ggplot(aes(VP_DISPO, part_immobile0))+geom_point()+labs(title = "part des immobiles par nombre de véhicules")
+#L'immobilité en fonction de l'âge
+mobilite %>% 
+  ggplot(aes(age, color=immobile))+geom_bar()+labs(title = "nombre immobile par âge")
+
+```
+L'augmentation du nombre de véhicule disponible a tendance à réduire l'immobilité
+
+```{r}
+#Construction des modèles
+#Commençons avec un modèle de régression linéaire multiple
+immobilite<-lm(immobile2~VP_DISPO+age, data = mobilite)
+summary(immobilite)
+#Un modèle logit semble plus adéquate que la régression linéaire
+immobilite2<-glm(immobile2~VP_DISPO+age, data=mobilite, family = binomial("probit"))
+summary(immobilite2)
+immobilite3<-glm(immobile2~VP_DISPO+age, data = mobilite, family = binomial("logit"))
+summary(immobilite3)
+#Calcul des Odds ratio
+exp(coefficients(immobilite3))
+#Les effets marginaux (erreurs)
+betas<-t(data.frame(coef(immobilite3))) ; betas
+xmean <- c(1, mean(as.numeric(mobilite$VP_DISPO)-1), mean(mobilite$age))
+xmean
+print("XBetas:")
+xb_logit <- sum(xmean*betas) ; xb_logit
+# Slopes (at mean): Lambda(mean(xb))*(b)
+print("Slopes:")
+logit_slopes <- dlogis(xb_logit)*betas ; logit_slopes
+#Quelques tests
+library(aod)
+```
+
+I)Introduction
+#II revue de la littérature
+III) Les données
+IV) Le modèle
+V)Conclusion
