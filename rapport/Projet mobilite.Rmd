@@ -33,21 +33,29 @@ mob<-factor(mobilite$immobile, levels = c("0","1"), labels = c("mobile","immobil
 mobilite %>% cbind(mob)->mobilite
 mobilite %>% select(mob, age, VP_DISPO) %>% 
   rename("immobile"="mob")->mobilite
-#créer une variable mobilité numérique
+#crÃ©er une variable mobilitÃ© numÃ©rique
 allgreI %>% select(immobileTRUE)->mob3
 cbind(mobilite, mob3)->mobilite
 mobilite %>% 
   rename("immobile2"="immobileTRUE")->mobilite
 ```
+
+```{r}
+# DÃ©coupage de la variable Ã¢ge en plusieurs classes
+table(cut(mobilite$age, breaks= c(0, 4, 17, 29, 39, 49, 59, 69, 100), useNA = "always"))
+classage <-  cut(mobilite$age, breaks= c(0, 4, 17, 29, 39, 49, 59, 69, 100), useNA = "always") 
+mobilite %>% cbind(classage)
+```
+
 ```{r}
 #Construction des stats descriptives
 summary(mobilite)
 
-#Part des immobiles dans l'échantillon
+#Part des immobiles dans l'Ã©chantillon
 mobilite %>% 
   mutate(VP_DISPO1=as.numeric(as.character(VP_DISPO)))->mobilite
 summary(mobilite)
-#construction d'une table indiquant l'immobilité en fonction du nombre de véhicule disponibles
+#construction d'une table indiquant l'immobilitÃ© en fonction du nombre de vÃ©hicule disponibles
 mobilite %>% 
   filter(VP_DISPO==0) %>% 
   mutate(part_immobile0=sum(immobile2)/633)->immobile0
@@ -81,30 +89,30 @@ mobilite %>%
 
 
 ```
-16.44% de personnes sont immobiles 
+16.44% de personnes sont immobiles
+
 ```{r}
 #Construction de graphiques
 mobilite %>% 
-  ggplot(aes(immobile))+geom_bar()+labs(title = "nombre de personne immobile")
+  ggplot(aes(immobile))+geom_bar()+labs(title = "nombre de personnes immobiles") + xlab("statut") + ylab("nombre de personnes")
 #mobilite %>% ggplot(aes(immobile, color=immobile))+geom_()
-#l'immobilité en fonction des véhicules disponibles
+#l'immobilitÃ© en fonction des vÃ©hicules disponibles
 mobilite %>% 
-  ggplot(aes(VP_DISPO, color=immobile))+geom_bar()+labs(title = "nombre de personne immobile par nombre de véhicule")
+  ggplot(aes(VP_DISPO, color=immobile))+geom_bar()+labs(title = "CaractÃ¨re de la mobilitÃ© selon le nombre de vÃ©hicules personnels au sein du mÃ©nage") + xlab("Nombre de vÃ©hicules") + ylab("Nombre de personnes")
 mobilite %>% 
-  ggplot(aes(VP_DISPO, part_immobile0))+geom_point()+labs(title = "part des immobiles par nombre de véhicules")
-#L'immobilité en fonction de l'âge
+  ggplot(aes(VP_DISPO, part_immobile0))+geom_point()+labs(title = "part des personnes immobiles selon le nombre de vÃ©hicules personnels au sein du mÃ©nage") + xlab("Nombre de vÃ©hicules") + ylab("Proportion de personnes immobiles")
+#L'immobilitÃ© en fonction de l'Ã¢ge
 mobilite %>% 
-  ggplot(aes(age, color=immobile))+geom_bar()+labs(title = "nombre immobile par âge")
-
+  ggplot(aes(classage, color=immobile))+geom_bar()+labs(title = "nombre de personnes immobiles par classe d'Ã¢ge") + xlab("classe d'Ã¢ge") + ylab("nombre de personnes") 
 ```
-L'augmentation du nombre de véhicule disponible a tendance à réduire l'immobilité
+L'augmentation du nombre de vÃ©hicule disponible a tendance Ã  rÃ©duire l'immobilitÃ©
 
 ```{r}
-#Construction des modèles
-#Commençons avec un modèle de régression linéaire multiple
+#Construction des modÃ¨les
+#CommenÃ§ons avec un modÃ¨le de rÃ©gression linÃ©aire multiple
 immobilite<-lm(immobile2~VP_DISPO+age, data = mobilite)
 summary(immobilite)
-#Un modèle logit semble plus adéquate que la régression linéaire
+#Un modÃ¨le logit semble plus adÃ©quate que la rÃ©gression linÃ©aire
 immobilite2<-glm(immobile2~VP_DISPO+age, data=mobilite, family = binomial("probit"))
 summary(immobilite2)
 immobilite3<-glm(immobile2~VP_DISPO+age, data = mobilite, family = binomial("logit"))
@@ -125,7 +133,7 @@ library(aod)
 ```
 
 I)Introduction
-#II revue de la littérature
-III) Les données
-IV) Le modèle
+#II revue de la littÃ©rature
+III) Les donnÃ©es
+IV) Le modÃ¨le
 V)Conclusion
