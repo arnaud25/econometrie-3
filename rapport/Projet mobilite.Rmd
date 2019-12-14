@@ -7,10 +7,8 @@ output: html_document
 
 ```{r}
 load("allgre.PB_V2.RData")
-library(tidyverse
-      )
+library(tidyverse)
 allgre.PB_V2 %>% distinct(id_pers,.keep_all = TRUE)-> allgreI
-
 ```
 
 
@@ -22,91 +20,283 @@ dummy(immobile) -> immobile
 ```
 ```{r}
 cbind(allgreI, immobile) -> allgreI
-allgreI %>% select(immobileTRUE, age, VP_DISPO) -> mobilite
+allgreI %>% select(immobileTRUE, age, VP_DISPO, etabscol, jourdepl, csp, sexe) -> mobilite
 mobilite<-mobilite %>% rename("immobile"="immobileTRUE")
+# On supprime les indvidus âgés de moins de 5 ans car automatiquement considérés comme personnes immobiles dans l'enquête
+mobilite <- mobilite %>% filter(age > 4)
 ```
+
 ```{r}
+# Transformation des variables immobile et "nombre de vehicules personnels" en facteurs
 mobilite$immobile <- factor(mobilite$immobile)
-mobilite$VP_DISPO <- factor(mobilite$VP_DISPO)
+mobilite$VP_DISPO <- as.character(mobilite$VP_DISPO)
+mobilite$VP_DISPO <- factor(mobilite$VP_DISPO, labels = c("0","1","2","3 et +","3 et +", "3 et +"))
+# Découpage de la variable âge en plusieurs classes
+table(cut(mobilite$age, breaks= c(4, 17, 29, 39, 49, 59, 69, 100), useNA = "always"))
+classage <-  cut(mobilite$age, breaks= c(4, 17, 29, 39, 49, 59, 69, 100), useNA = "always") 
+mobilite %>% cbind(classage)
+```
+
+```{r}
+# Construction variable sexe
+mobilite$sexe <- as.character(mobilite$sexe)
+mobilite$sexe <- factor(mobilite$sexe, labels = c("Homme","Femme"))
+
+# Construction variable dernier établissement scolaire fréquenté (approximation niveau de diplôme obtenu)
+mobilite$etabscol <-as.character(mobilite$etabscol) 
+mobilite$etabscol[mobilite$etabscol %in% "8"]<-"PAS D'ETUDES"
+mobilite$etabscol[mobilite$etabscol%in% "7"]<-"APPRENTISSAGE"
+mobilite$etabscol[mobilite$etabscol%in% "6"]<-"Bac + 3 et plus"
+mobilite$etabscol[mobilite$etabscol%in% "5"]<-"Bac + 1-2"
+mobilite$etabscol[mobilite$etabscol%in% c("2", "3", "4")]<-"SECONDAIRE"
+mobilite$etabscol[mobilite$etabscol%in% "1"] <-"PRIMAIRE"
+mobilite$etabscol[mobilite$etabscol%in% "0" ]<-"EN COURS DE SCOLARITE"
+mobilite$etabscol <-as.factor(mobilite$etabscol)
+table(mobilite$etabscol)
 summary(mobilite)
+
+# Construction variable jour de la semaine
+mobilite$jourdepl <-as.character(mobilite$jourdepl) 
+mobilite$jourdepl[mobilite$jourdepl %in% "1"]<-"Lundi"
+mobilite$jourdepl[mobilite$jourdepl %in% "2"]<-"Mardi"
+mobilite$jourdepl[mobilite$jourdepl %in% "3"]<-"Mercredi"
+mobilite$jourdepl[mobilite$jourdepl %in% "4"]<-"Jeudi"
+mobilite$jourdepl[mobilite$jourdepl %in% "5"]<-"Vendredi"
+mobilite$jourdepl <-as.factor(mobilite$jourdepl)
+table(mobilite$jourdepl)
+summary(mobilite)
+
+# Construction variable PCS
+mobilite$csp <-as.character(mobilite$csp)
+mobilite$csp[mobilite$csp %in% "10"]<-"Agriculteurs"
+mobilite$csp[mobilite$csp %in% c("21","22", "23")]<-"Artisans, commerçants"
+mobilite$csp[mobilite$csp %in% c("31","32","36")]<-"Cadres"
+mobilite$csp[mobilite$csp %in% c("41", "46", "47", "48")]<-"Professions intermédiaires"
+mobilite$csp[mobilite$csp %in% c("51", "54", "55", "56")]<-"Employés"
+mobilite$csp[mobilite$csp %in% c("61", "66", "69")]<-"Ouvriers"
+mobilite$csp[mobilite$csp %in% c("81", "82", "83", "84", "85", "86", "87")]<-"Chomeurs et inactifs"
+mobilite$csp[mobilite$csp %in% c("90", "99")]<- "Autres"
+mobilite$csp <-as.factor(mobilite$csp)
+table(mobilite$csp)
+summary(mobilite)
+```
+
+
+```{r}
+#Construction variable "statut de la mobilité" puis sélection des variables d'intérêt
 mob<-factor(mobilite$immobile, levels = c("0","1"), labels = c("mobile","immobile"))
 mobilite %>% cbind(mob)->mobilite
-mobilite %>% select(mob, age, VP_DISPO) %>% 
+mobilite %>% select(mob, age, VP_DISPO, etabscol, jourdepl, csp, sexe) %>% 
   rename("immobile"="mob")->mobilite
+
 #créer une variable mobilité numérique
-allgreI %>% select(immobileTRUE)->mob3
+allgreI %>% filter(age > 4) %>% select(immobileTRUE)->mob3
 cbind(mobilite, mob3)->mobilite
 mobilite %>% 
   rename("immobile2"="immobileTRUE")->mobilite
 ```
 
 ```{r}
-# Découpage de la variable âge en plusieurs classes
-table(cut(mobilite$age, breaks= c(0, 4, 17, 29, 39, 49, 59, 69, 100), useNA = "always"))
-classage <-  cut(mobilite$age, breaks= c(0, 4, 17, 29, 39, 49, 59, 69, 100), useNA = "always") 
-mobilite %>% cbind(classage)
-```
-
-```{r}
-#Construction des stats descriptives
+#Elaboration des statistiques descriptives
 summary(mobilite)
 
-#Part des immobiles dans l'échantillon
+#construction d'une table indiquant la proportion de personnes immobiles en fonction du nombre de véhicule disponibles
+
 mobilite %>% 
-  mutate(VP_DISPO1=as.numeric(as.character(VP_DISPO)))->mobilite
-summary(mobilite)
-#construction d'une table indiquant l'immobilité en fonction du nombre de véhicule disponibles
+  filter(VP_DISPO=="0") %>% 
+  mutate(part_immobile0=sum(immobile2)/613)->immobile0
 mobilite %>% 
-  filter(VP_DISPO==0) %>% 
-  mutate(part_immobile0=sum(immobile2)/633)->immobile0
+  filter(VP_DISPO=="1") %>% 
+  mutate(part_immobile0=sum(immobile2)/2452)->immobile1
 mobilite %>% 
-  filter(VP_DISPO==1) %>% 
-  mutate(part_immobile0=sum(immobile2)/2599)->immobile1
+  filter(VP_DISPO=="2") %>% 
+  mutate(part_immobile0=sum(immobile2)/3438)->immobile2
 mobilite %>% 
-  filter(VP_DISPO==2) %>% 
-  mutate(part_immobile0=sum(immobile2)/3700)->immobile2
+  filter(VP_DISPO=="3 et +") %>% 
+  mutate(part_immobile0=sum(immobile2)/803)->immobile3
+rbind(immobile0,immobile1)->immobile1
+rbind(immobile1, immobile2)->immobile2
+rbind(immobile2, immobile3)->immobile3
 mobilite %>% 
-  filter(VP_DISPO==3) %>% 
-  mutate(part_immobile0=sum(immobile2)/673)->immobile3
+ arrange(VP_DISPO)->mobilite
+immobile3 %>% 
+  select(part_immobile0)->immobile3
 mobilite %>% 
-  filter(VP_DISPO==4) %>% 
-  mutate(part_immobile0=sum(immobile2)/159)->immobile4
+  cbind(immobile3)->mobilite
+
+#construction d'une table indiquant la proportion de personnes immobiles en fonction du dernier niveau d'études suivi
+
 mobilite %>% 
-  filter(VP_DISPO==5) %>% 
-  mutate(part_immobile0=sum(immobile2)/2)->immobile5
+  filter(etabscol %in% "APPRENTISSAGE") %>% 
+  mutate(prop_imm_scol=sum(immobile2)/24)->immobile0
+mobilite %>% 
+  filter(etabscol %in% "Bac + 1-2") %>% 
+  mutate(prop_imm_scol=sum(immobile2)/709)->immobile1
+mobilite %>% 
+  filter(etabscol %in% "Bac + 3 et plus") %>% 
+  mutate(prop_imm_scol=sum(immobile2)/1285)->immobile2
+mobilite %>% 
+  filter(etabscol %in%  "EN COURS DE SCOLARITE") %>% 
+  mutate(prop_imm_scol=sum(immobile2)/1879)->immobile3
+mobilite %>% 
+  filter(etabscol %in%  "PAS D'ETUDES") %>% 
+  mutate(prop_imm_scol=sum(immobile2)/25)->immobile4
+mobilite %>% 
+  filter(etabscol %in% "PRIMAIRE") %>% 
+  mutate(prop_imm_scol=sum(immobile2)/413)->immobile5
+mobilite %>% 
+  filter(etabscol %in% "SECONDAIRE") %>% 
+  mutate(prop_imm_scol=sum(immobile2)/2971)->immobile6
 rbind(immobile0,immobile1)->immobile1
 rbind(immobile1, immobile2)->immobile2
 rbind(immobile2, immobile3)->immobile3
 rbind(immobile3, immobile4)->immobile4
 rbind(immobile4, immobile5)->immobile5
+rbind(immobile5, immobile6)->immobile6
+mobilite %>% 
+ arrange(etabscol)->mobilite
+immobile6 %>% 
+  select(prop_imm_scol)->immobile6
+mobilite %>% 
+  cbind(immobile6)->mobilite
+
+#Construction d'une table indiquant la proportion de personnes immobiles en fonction du jour de la semaine
+mobilite %>% 
+  filter(jourdepl %in% "Jeudi") %>% 
+  mutate(prop_imm_jour=sum(immobile2)/1246)->immobile0
+mobilite %>% 
+  filter(jourdepl %in% "Lundi") %>% 
+  mutate(prop_imm_jour=sum(immobile2)/1494)->immobile1
+mobilite %>% 
+  filter(jourdepl %in% "Mardi") %>% 
+  mutate(prop_imm_jour=sum(immobile2)/1738)->immobile2
+mobilite %>% 
+  filter(jourdepl %in% "Mercredi") %>% 
+  mutate(prop_imm_jour=sum(immobile2)/1475)->immobile3
+mobilite %>% 
+  filter(jourdepl %in% "Vendredi") %>% 
+  mutate(prop_imm_jour=sum(immobile2)/1353)->immobile4
+rbind(immobile0,immobile1)->immobile1
+rbind(immobile1, immobile2)->immobile2
+rbind(immobile2, immobile3)->immobile3
+rbind(immobile3, immobile4)->immobile4
+mobilite %>% 
+ arrange(jourdepl)->mobilite
+immobile4 %>% 
+  select(prop_imm_jour)->immobile4
+mobilite %>% 
+  cbind(immobile4)->mobilite
+
+#Construction d'une table indiquant la proportion de personnes immobiles en fonction de la catégorie socio-professionnelle
+mobilite %>% 
+  filter(csp %in% "Agriculteurs") %>% 
+  mutate(prop_imm_csp = sum(immobile2)/101)-> immobile0
+mobilite %>% 
+  filter(csp %in% "Artisans, commerçants") %>% 
+  mutate(prop_imm_csp = sum(immobile2)/319)-> immobile1
+mobilite %>% 
+  filter(csp %in% "Autres") %>% 
+  mutate(prop_imm_csp = sum(immobile2)/63)-> immobile2
+mobilite %>% 
+  filter(csp %in% "Cadres") %>% 
+  mutate(prop_imm_csp = sum(immobile2)/1129)-> immobile3
+mobilite %>% 
+  filter(csp %in% "Chomeurs et inactifs") %>% 
+  mutate(prop_imm_csp = sum(immobile2)/2118)-> immobile4
+mobilite %>% 
+  filter(csp %in% "Employés") %>% 
+  mutate(prop_imm_csp = sum(immobile2)/1404)-> immobile5
+mobilite %>% 
+  filter(csp %in% "Ouvriers") %>% 
+  mutate(prop_imm_csp = sum(immobile2)/981)-> immobile6
+mobilite %>% 
+  filter(csp %in% "Professions intermédiaires") %>% 
+  mutate(prop_imm_csp = sum(immobile2)/1191)-> immobile7
+rbind(immobile0,immobile1)->immobile1
+rbind(immobile1, immobile2)->immobile2
+rbind(immobile2, immobile3)->immobile3
+rbind(immobile3, immobile4)->immobile4
+rbind(immobile4, immobile5)->immobile5
+rbind(immobile5, immobile6)->immobile6
+rbind(immobile6, immobile7)->immobile7
+mobilite %>% 
+ arrange(csp)->mobilite
+immobile7 %>% 
+  select(prop_imm_csp)->immobile7
+mobilite %>% 
+  cbind(immobile7)->mobilite
+
+# Construction d'une table indiquant la proportion de personnes immobiles en fonction du sexe
 
 mobilite %>% 
- arrange(VP_DISPO)->mobilite
-immobile5 %>% 
-  select(part_immobile0)->immobile5
+  filter(sexe %in% "Homme") %>% 
+  mutate(prop_imm_sexe = sum(immobile2)/3574)-> immobile0
 mobilite %>% 
-  cbind(immobile5)->mobilite
-
+  filter(sexe %in% "Femme") %>% 
+  mutate(prop_imm_sexe = sum(immobile2)/3732)-> immobile1
+rbind(immobile0,immobile1)->immobile1
+mobilite %>% 
+ arrange(sexe)->mobilite
+immobile1 %>% 
+  select(prop_imm_sexe)->immobile1
+mobilite %>% 
+  cbind(immobile1)->mobilite
 
 ```
-16.44% de personnes sont immobiles
+Parmi les personnes de plus de 4 ans incluses dans l'enquête, 11.18% n'ont effectué aucun déplacement donc elles sont considérées comme immobiles.
 
 ```{r}
 #Construction de graphiques
 mobilite %>% 
   ggplot(aes(immobile))+geom_bar()+labs(title = "nombre de personnes immobiles") + xlab("statut") + ylab("nombre de personnes")
 #mobilite %>% ggplot(aes(immobile, color=immobile))+geom_()
+
 #l'immobilité en fonction des véhicules disponibles
+
 mobilite %>% 
   ggplot(aes(VP_DISPO, color=immobile))+geom_bar()+labs(title = "Caractère de la mobilité selon le nombre de véhicules personnels au sein du ménage") + xlab("Nombre de véhicules") + ylab("Nombre de personnes")
 mobilite %>% 
   ggplot(aes(VP_DISPO, part_immobile0))+geom_point()+labs(title = "part des personnes immobiles selon le nombre de véhicules personnels au sein du ménage") + xlab("Nombre de véhicules") + ylab("Proportion de personnes immobiles")
+
 #L'immobilité en fonction de l'âge
+
 mobilite %>% 
-  ggplot(aes(classage, color=immobile))+geom_bar()+labs(title = "nombre de personnes immobiles par classe d'âge") + xlab("classe d'âge") + ylab("nombre de personnes") 
+  ggplot(aes(classage, color=immobile))+geom_bar()+labs(title = "nombre de personnes immobiles par classe d'âge") + xlab("classe d'âge") + ylab("nombre de personnes")
+mobilite %>% 
+  
+# L'immobilité en fonction du sexe
+mobilite %>% 
+  ggplot(aes(sexe, color=immobile))+geom_bar()+labs(title = "nombre de personnes immobiles selon le genre") + xlab("Genre") + ylab("nombre de personnes")
+mobilite %>% 
+  ggplot(aes(sexe, prop_imm_sexe))+geom_point()+labs(title = "part des personnes immobiles selon le genre") + xlab("Genre") + ylab("Proportion de personnes immobiles")
+
+ # L'immobilité en fonction du dernier niveau d'études suivi
+  
+ggplot(aes(etabscol, color=immobile))+geom_bar()+labs(title = "nombre de personnes immobiles selon le niveau d'études") + xlab("niveau d'études") + ylab("nombre de personnes")
+mobilite %>% 
+  ggplot(aes(etabscol, prop_imm_scol))+geom_point()+labs(title = "part des personnes immobiles selon le niveau d'études") + xlab("Niveau d'études") + ylab("Proportion de personnes immobiles")
+
+# L'immobilité en fonction du jour de la semaine
+mobilite %>% 
+ggplot(aes(jourdepl, color=immobile))+geom_bar()+labs(title = "nombre de personnes immobiles selon le jour de la semaine") + xlab("jour") + ylab("nombre de personnes")
+mobilite %>% 
+ggplot(aes(jourdepl, prop_imm_jour))+geom_point()+labs(title = "Part des personnes immobiles selon le jour de la semaine") + xlab("Jour") + ylab("Proportion de personnes immobiles")
+
+ # L'immobilité en fonction de la catégorie socio-professionnelle
+mobilite %>% 
+ggplot(aes(csp, color=immobile))+geom_bar()+labs(title = "nombre de personnes immobiles selon la CSP") + xlab("CSP") + ylab("nombre de personnes")
+mobilite %>% 
+ggplot(aes(csp, prop_imm_csp))+geom_point()+labs(title = "Part des personnes immobiles selon la CSP") + xlab("CSP") + ylab("Proportion de personnes immobiles")
 ```
 L'augmentation du nombre de véhicule disponible a tendance à réduire l'immobilité
 
+On constate que plus le dernier niveau d'études suivi est avancé, plus la proportion d'immobiles est faible : confirmation intuition de la revue de la littérature.
+
+On constate que la proportion de personnes immobiles est plus élevé le lundi et le mercredi
+
+Proportions d'immobiles plus élevée chezles agriculteurs, ensuite vien Artisans commerçants, Employés, Ouvriers. Chômeurs et inacctifs encore un cran en dessous (mélange étudiants qui sont mobiles puis des inactifs qui ne travaillent et n'étudient pas donc peu mobiles) Les cadres et Professions intermédiaires sont les plus mobiles.
+
+Proportion d'immobiles plus élevée chez les femmes
 ```{r}
 #Construction des modèles
 #Commençons avec un modèle de régression linéaire multiple
