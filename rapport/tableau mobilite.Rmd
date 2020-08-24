@@ -1,0 +1,174 @@
+---
+title: "Untitled"
+author: "BLANC Arnaud"
+date: "19 dÃ©cembre 2019"
+output:
+  word_document: default
+  html_document: default
+---
+
+#I) Introduction
+[\justify]De nombreuse études ont cherché a étudier les caractéristiques des déplacements des individus. En général, ces études se concentrent sur 2 types d'enquête. Il y a les enquêtes de transport et les enquêtes sur l'emploi du temps. Ces études montrent qu'il existe un nombre important de personne qui demaure immobile. En France, selon l'enquête de transport de 2008, 15% des individus sont immobiles.[\justify]
+[\Justify]Suivant les enquêtes auxquelles ont fait face nous pouvons définir l'immobilité de différentes façon. Dans les enquêtes emploi du temps l'immobilité est définie soit comme des personnes dont l'activité se fait à domicile soit comme des personnes qui ont un temps passé en transport qui est nul.Dans les enquêtes de transport on définit plutôt la mobilité par un nombre de voyage par personne. Ainsi, l'immobilité est définit comme un nombre nul de voyage. Dans cette étude, nous retiendrons cette définition. En effet, pour nous une personne sera considérée comme immobile si elle n'a fait aucun déplacement sur la période étudiée. Le déplacement est défini quand à lui comme le mouvement d'une personne, effectué pour un certain motif, sur la voie publique, entre une origine et une destination, selon une heure de départ et une heure d'arrivé, à l'aide d'un ou plusieurs mode de transport. Ainsi, si un individu a fait un déplacement alors il est considéré comme mobile. Connaître la part des individus qui sont immobiles est important. En effet ces individus sont souvent inclus dans le calcul d'idicateur de mobilité (moyennes et quantiles). Ainsi, le nombre moyen de déplacement par individu est biaisé par les personnes qui sont immobiles. C'est aussi un problème important car c'est à partir des enquêtes de transport que sont construits les modèles. A l'heure d'aujourd'hui un nombre plus important de données permet de prendre en compte les problèmes de l'immobilité. L'immobilité définit précédemment peut-être due à un certain nombre de facteurs. Ces facteurs peuvent être liées aux charactéristiques individuelles comme le type d'activité et d'autres facteurs qui peuvent influer sur l'immobilité des individus.[\justify]
+[\justify]Notre analyse se concentrera sur une base de données issue d'une enquête qui a eu lieu dans la ville de Grenoble. Il s'agit d'une enquête basée sur les déplacements des grenoblois en 2010. Ces données décrivent les déplacements effectuées par les membres des ménages en 2010. Elle permet d'étudier les caractéristiques des individus et des ménages. Notre étude se concentrera sur les caractéristiques individuelles des personnes et sur leurs trajets, à partir de la base des individus. Nous développerons un modèle logit pour évaluer les caractéristiques qui influent sur l'immobilité. Nous nous concentrerons sur un petit nombre de variables pour construire ce modèles.
+Ici, nous nous demanderons quels sont les facteurs individuels qui influencent l'immobilité ?
+Pour répondre à cette question, nous verrons tout d'abord une courte revue de la littérature. Ensuite, nous étudierons les variables que la littérature nous a permis d'identifier. Troisièmement, nous analyserons la construction du modèles. Nous verrons, ensuite, les résultats. Pour finir, nous concluerons.[\justify]
+
+#II)Revue de la littérature
+\Justify
+Nous allons, maintenant, sélectionner les variables qui nous permettrons de construire notre modèle. En effet, il est certain que l'âge devrait avoir un effet positif sur l'immobilité. En effet, plus on vieillit plus l'individu deviendra immobile. Ainsi, l'âge possède un effet positif sur l'immobilité. Avec l'âge le taux d'immobilité augmente (Armoogum J. & al. 2005). Il passe de 12.7% à 43.5%. Dans cet article l'âge est séparé en classe de dix ans chacune. Les auteurs observent aussi l'effet du sexe sur l'immobilité. En effet, nous pouvons observer que le taux d'immobilité est plus important chez les femmes que chez les hommes. Ainsi, 20.3% des femmes étaient immobiles contre seulement 13.9% des hommes. Ainsi, le sexe devrait avoir un effet sur l'immobilité. Le fait d'être un homme  devrait avoir un effet négatif sur l'immobilité. Ils analysent aussi l'effet du jour de la semaine sur l'immobilité. En effet, le jour de la semaine peut impacter l'immobilité. Ce la peut s'expliquer par plusieurs facteurs. Ainsi, le taux d'immobilité est le plus important le lundi. Ainsi, par rapport au lundi l'effet devrait être négatif sur le fait d'être immobile. On peut aussi étudier l'effet de la catégorie socio-professionnelle sur la probabilité 'être immobile. Ainsi, les individus les plus immobiles sont les agriculteurs. Ils représentent 45.3%. Les autres catégories sont plus susceptibles d'être mobiles par rapport aux agriculteurs. Ainsi, si les agriculteurs sont utilisés comme référence alors la probabilité d'être immobile diminue. Le niveau de scolarisation est aussi utilisé pour évaluer l'immobilité. Ainsi, des individus qui n'ont aucun diplôme ont plus de chance d'être immobile. En effet, 42.1% des individus qui n'ont pas de diplôme sont immobiles. De la même manière, si on utilise des individus qui n'ont aucun diplôme comme référence alors la probabilité d'être immobile devrait baisser. Cet article cherchait à comparer les taux d'immobilités dans les enquêtes belges et française. Nous étudions aussi un deuxième article. Celui-ci cherche à étudier les facteurs spatiales de l'immobilité en France (Motte-Baumvol B. 2018). Pour cela, ils utilisent les données de l'enquête de transport de 2008.  Cet article identifie les déterminants de l'immobilité. Ainsi, ils identifient l'âge, la retraite, le handicap. Ces éléments contribuent à augmenter l'immobilité. De la même façon, le fait de travailler chez soi ou d'être au chômage ont des effets important sur l'immobilité. Ainsi, le fait de travailler chez soi limite beaucoup la mobilité. Il en est de même pour le fait d'être au chômage. L'accès à un véhicule limite l'immobilité. Le fait d'avoir un revenu bas augmente la probabilité d'être immobile. Ainsi, avoir un revenu faible empêche l'individu d'accéder à des moyens de transport. Il augmente donc la probabilité d'être immobile. Donc, nous allons conserver l'âge, le niveau de diplôme, le fait de posséder un véhicule, le sexe, la catégorie socio-professionnelle, le jour de la semaine, le niveau de revenu, le fait d'avoir un handicap et le fait de travailler à domicile.[\Justify]
+
+##La base de données
+[\Justify] La base de données utilisée ici, provient d'une enquête qui a eu lieu à Grenoble, en 2010. Il s'agit d'une enquête qui se concentre sur les dépalcements des Grenoblois en 2010. Ces données décrivent les déplacements effectués par les membres des ménages de la ville de Grenoble, en 2010. Elle permet d'étudier plusieurs caractéristiques. En effet, cette base de données étudient les caractéristiques des individus, desménages et des trajets. Il semble important de se concentrer sur les caractéristiques individuelles des individus pour étudier l'immobilité. Pour cela, nous avons construit la base des individus. Cette étude se concentre sur les caractéristiques des individus qui influencent l'immobilité. Cette base de données est construit autours des individus. Ainsi, chaque individu possède un code différent. La littérature a permis d'identifier plusieurs caractéristiques qui seraient susceptible d'influencer la mobilité des individus. Pour construire cette base de données, il faut conserver le nombre de déplacement, la catégorie socio-professionnelle, l'âge, le nombre de véhicule disponible dans le ménage, l'établissement scolaire, le jour de déplacement et le sexe. Ces variables permettent de construire nos variables explicatives. En effet, pour construire la variable de l'immobilité, nous travaillons à partir du nombre de déplacement. Ainsi, quand le nombre de déplacement est nul, cela signifie que l'individu est immobile. A l'inverse, les individus qui font au moins un trajet sont considérés comme mobile. Dans cette base, nous supprimons les enfants de moins de 4 ans. En effet, il semble peu probable que les individus de moins de 4 ans soit mobile. En effet, les individus de moins de 4 ans ne sont pas encore inscrit à l'école. Donc, les individus de moins de 4 ans ne sont pas en capacité de choisir de se déplacer. Ils sont donc exclus de l'échantillon. La base de données conserve aussi le nombre de véhicule disponible. Au départ, cette variable possède 6 modalités. Nous avons décidé de ne conserver que 4 modalités. En effet, le nombre d'immobiles est très limité ou inexistant après un nombre de 3 véhicules disponibles dans le ménages. Donc seul, 4 modalités sont intégrées dans la base de données. L'âge est aussi intégré à la base de données. Cette variable sera intégrée à la base de données sous la forme de classe d'âge. Il y a 7 classes d'âge différentes. La base contient les déplacements, lors des jours ouvrés. On conserve également le niveau d'études des individus ainsi que le sexe des individus. Pour finir, cette base est composée des catégories socio-professionnelles. Elle conserve les grandes classes. Ainsi, on garde la classe des agriculteurs, des artisants, commerçants, des cadres, des professions intermédiaires, des employés, des ouvriers, des chômeurs et inactifs et des autres. On ne conserve pas les sous classes car elles ne fournisent une information supplémentaire très importante. En effet, les classes principales permettent d'étudier l'effet de la situation professionnelle sur l'immobilité.
+L'échantillon de la base de données sur lequel nous travaillons est composé de 7306 individus. Parmi ces inividus, nous avons 817 immobiles ce qui représente environ 11,18%. Les individus étudiés sont agés, en moyenne, de 41.28 ans. Ils disposent de 1.628 voitures par ménage. La majorité des individus interrogés dans cette enquètes sont encore dans le secondaire soit 2971 indivividus. Les personnes ont tendance à plus se déplacer le mardi. Cela peut s'expliquer notamment par le fait que les artisants et les commerçants français était souvent fermé le lundi. L'échantillon utilisé est majoritairement composé de chômeurs et d'inactif. Pour finir, il y a légérement plus de femme que d'homme dans cet échantillon.[\Justify]
+
+##L'analyse des données
+L'analyse de la base de données nous a permis de construire les variables d'intérêt. Maintenant, l'analyse des données va passer par une analyse du nombre d'immobile pour chaque variable et d'une analyse graphique.
+D'abord, il nous faut construire un tableau d'analyse des variables.
+```{r}
+library(arsenal)
+mobile<-tableby(immobile~age+VP_DISPO+etabscol+jourdepl+csp+sexe, data = mobilite)
+summary(mobile)
+```
+
+Grâce à ce tableau, il est possible de faire une analyse détaillée de chaque variable sur le fait d'être immobile ou non. On remarque que chaque variable sélectionnée est significative au seuil de 5%. Il est plus intéressant pour nous de travavailler sur l'immobilité. Ainsi, l'âge moyen des individus immobiles est de 53.597 ans, à plus ou moins 24.483 ans. Ce tableau permet de voir que les immobiles sont plus âgés que les personnes mobiles. En effet, les personnes mobiles ont en moyenne 39.727 ans. En moyenne, l'âge des individus immobiles est environ 14 ans plus âgés que les individus mobiles. Le tableau donne des résultats qui sont plutôt cohérent avec la littérature. Ensuite, le nombre de véhicule disponible possède un impact sur le fait d'être mobiles. On peut remarquer que dans l'échantillon les personnes les plus immobiles possèdent un véhicule disponible dans le ménage. En effet, parmi les immobiles 137 n'ont pas de véhicule disponible. Il y a donc très peu d'individu qui ne possède pas de véhicule, c'est pourquoi il n'y a que 16.8% d'immobiles qui ne possèdent pas de véhicule. Ensuite, la plupart des ménages possèdent entre 1 et 2 véhicules. Ainsi, on peut remarquer que le nombre d'immobiles est plus important pour les individus qui possèdent un véhicule disponible (41.4%) que pour les individu qui en possèdent 2 (35.3%). Pour finir, les individus qui possèdent plus de 3 véhicules disponibles dans le ménage ont moins de chance d'être immobiles que tous les autres individus. En effet, Seuls 54 individus qui ont plus de 3 véhicules disponibles sont immobiles. Cela représente 6.6% des individus qui sont immobiles. Parmi, les personnes mobiles ceux qui disposent de 2 véhicules sont les plus mobiles. En effet, ils représentent 48.5% des individus qui sont mobiles. Le niveau d'études a aussi un impact sur l'immobilité. On remarque que se sont les individus qui sont encore dans le secondaire qui sont le plus immobiles. En effet, il représente 51.4% des individu immobiles. Les personnes qui sont en apprentissages sont les individus les moins immobiles. Si, on se concentre sur les jours de déplacement. Le lundi est le jour ou les individus sont le plus immobiles. En effet, le lundi est un jour où les commerces sont souvent fermés. Le lundi 25.9% des individus sont immobiles. Par la suite on trouve le mardi et le mercredi qui représentent respectivement 22.4% et 22.9% d'individus immobiles. Le jeudi et le vendredi sont les jours où les individus sont les plus immobiles. Ils représentent 15.2% et 13.6% d'immobiles. Les catégories socio-professionnelles influencent le comportement individuel de mobilité. Les catégories socio-professionnelles les plus basses comme les chômeurs sont les plus immobiles au niveau de la totalité de l'échantillon. Ils représentent 26.9%. Les employés représentent 25% des immobiles. Ensuite, on trouve les ouvriers qui sont 17.1%. Les professions intermédiaires représentent 12.4% des immobiles. Pour finir, les cadres représentent 9.5%. On remarque aussi que les femmes sont plus immobiles que les hommes dans cet échantillon. En effet, il y a 60.2% des femmes qui sont immobiles contre 39.8% des hommes.
+Passons maintenant à l'analyse des graphiques des variables. Nous avons construit un graphique par variable.
+Ces graphiques étudient les variations des parts des individus immobiles expliqués par le nombre de véhicules disponibles au sein des ménages. On remarque que la part des individus immobiles est presque de 20% pour les individus qui ne possèdent pas de véhicules. Pour les individus qui possèdent 1 véhicules, on obtient environ 14%. Ensuite, ce graphique montre que 6% des individus qui possèdent 2 véhicules sont immobiles. Pour finir, 2% des individus qui possèdent 3 véhicules ou plus sont immobiles. On peut donc remarquer que la part des immobiles suivant le nombre de véhicules disponibles est décroissante. Ainsi, la part des immobiles décroît avec le nombre de véhicules disponibles. En observant les individus par classe d'âge, on observe que les plus jeunes ont le plus d'immobiles. Néanmoins, on n'observe pas la part d'immobilité pour chaque classe d'âge. Ensuite, c'est les 49-59 ans qui enregistrent le nombre d'immobiles le plus élevé. La part des immobiles est bien supérieur pour les individus de sexe féminin par rapport aux individus de sexe masculin. Ainsi, dans l'échantillon des hommes il y a environ 9% d'immobiles alors que dans celui des femmes il y a environ 13% d'immobiles. Le niveau de diplôme a un impact important sur la part des individus mobiles ou immobiles. Ainsi, la part d'immobiles est bien supérieure chez les individus qui ne font pas d'études. En effet, ils représentent presque 60% des immobiles dans les individus qui n'ont pas d'études. Les individus qui sont dans le primaire sont immobiles à 33%. 18% des individus qui sont en primaire sont immobiles. Environ 9% des individus qui sont en apprentissage ou au niveau d'un bac +1-2 sont immobiles. 8% des individus qui sont en cours de scolarité sont immobiles. Pour finir, 7% des individus qui sont en bac+3 sont immobiles. En conclusion, plus le niveau d'études des individus est élevé et plus les individus sont mobiles. 14% des individus se déplaçants le lundi sont immobiles. 13% des individus se déplaçant le mercredi sont immobiles. 11% des individus se déplaçant le mardi sont immobiles. 10% des individus se déplaçant le jeudi sont immobiles. 8% des individus se déplaçant le vendredi sont immobiles. Ainsi, les jours où il n'y a pas écoles et où les commerçants sont fermés comptabilisent plus de personnes immobiles. 20% des individus qui sont agriculteurs sont immobiles. Les cadres représentent 3% des individus immobiles. 11% des chômeurs sont immobiles. 11% des commerçants sont égalements immobiles. 15% des employés sont immobiles. 15% des ouvriers sont immobiles. Pour finir, 8% des individus travaillant dans les professions intermédiaires sont immobiles. En conclusion, les individus avec un fort niveau de diplôme et un métier avec une catégorie haute sont plus mobiles que les autres.
+```{r}
+library(cowplot)
+#Construction de graphiques
+mobilite %>% 
+  ggplot(aes(immobile))+geom_bar()+labs(title = "nombre de personnes immobiles") + xlab("statut") + ylab("nombre de personnes")
+#mobilite %>% ggplot(aes(immobile, color=immobile))+geom_()
+
+#l'immobilité en fonction des véhicules disponibles
+
+bp<-mobilite %>% 
+  ggplot(aes(VP_DISPO, fill = immobile))+geom_bar() + xlab("Nombre de véhicules") + ylab("Nombre de personnes")
+p<-mobilite %>% 
+  ggplot(aes(VP_DISPO, part_immobile0))+geom_point() + xlab("Nombre de véhicules") + ylab("Proportion de personnes immobiles")
+plot_grid(bp, p, labels = c("mobilité par véhicule disponible","part immobile"))
+p
+#L'immobilité en fonction de l'âge
+
+mobilite %>% 
+  ggplot(aes(classage, fill = immobile))+geom_bar()+labs(title = "nombre de personnes immobiles par classe d'âge") + xlab("classe d'âge") + ylab("nombre de personnes")
+ 
+  
+# L'immobilité en fonction du sexe
+bp1<-mobilite %>% 
+  ggplot(aes(sexe, fill=immobile))+geom_bar()+labs(title = "nombre de personnes immobiles selon le genre") + xlab("Genre") + ylab("nombre de personnes")
+p1<-mobilite %>% 
+  ggplot(aes(sexe, prop_imm_sexe))+geom_point()+labs(title = "part des personnes immobiles selon le genre") + xlab("Genre") + ylab("Proportion de personnes immobiles")
+plot_grid(bp1, p1)
+p1
+ # L'immobilité en fonction du dernier niveau d'études suivi
+  bp2<-mobilite %>% 
+ggplot(aes(etabscol, fill=immobile))+geom_bar()+labs(title = "nombre de personnes immobiles selon le niveau d'études") + xlab("niveau d'études") + ylab("nombre de personnes")
+p2<-mobilite %>% 
+  ggplot(aes(etabscol, prop_imm_scol))+geom_point()+labs(title = "part des personnes immobiles selon le niveau d'études") + xlab("Niveau d'études") + ylab("Proportion de personnes immobiles")
+plot_grid(bp2, p2)
+p2
+# L'immobilité en fonction du jour de la semaine
+bp3<-mobilite %>% 
+ggplot(aes(jourdepl, fill=immobile))+geom_bar()+labs(title = "nombre de personnes immobiles selon le jour de la semaine") + xlab("jour") + ylab("nombre de personnes")
+p3<-mobilite %>% 
+ggplot(aes(jourdepl, prop_imm_jour))+geom_point()+labs(title = "Part des personnes immobiles selon le jour de la semaine") + xlab("Jour") + ylab("Proportion de personnes immobiles")
+plot_grid(bp3,p3)
+p3
+ # L'immobilité en fonction de la catégorie socio-professionnelle
+bp4<-mobilite %>% 
+ggplot(aes(csp, fill=immobile))+geom_bar()+labs(title = "nombre de personnes immobiles selon la CSP") + xlab("CSP") + ylab("nombre de personnes")
+p4<-mobilite %>% 
+ggplot(aes(csp, prop_imm_csp))+geom_point()+labs(title = "Part des personnes immobiles selon la CSP") + xlab("CSP") + ylab("Proportion de personnes immobiles")
+plot_grid(bp4, p4)
+p4
+```
+
+#IV)La construction du modèle
+Nous allons commencer par étudier la forme que devrait prendre les variables puis nous les intégrerons une par une pour construire notre modèle final. Pour construire, notre modèle nous utiliserons la méthode forward. Nous allons intégrer les variables une par une. A chaque fois, nous vérifierons que le modèle est bien significatif et que d'autres critères augmente pour choisir notre modèle final. Au fur et à mesure que nous intégrerons les variables, nous vérifierons que ces variables connaissent bien une relation quadratique ou linéaire.
+```{r}
+#Construction du modèle
+library(aod)
+library(car)
+library(lmtest)
+vehicule<-glm(immobile~VP_DISPO, data = mobilite, family = binomial(link = "logit"))
+vehicule0<-glm(immobile~1, x=TRUE, data = mobilite, family = binomial(link = "logit"))
+summary(vehicule)
+wald.test(Sigma = vcov(vehicule), b = coef(vehicule), Terms = 2:4)
+lrtest(vehicule0, vehicule)
+res<-resid(vehicule)
+plot(mobilite$VP_DISPO, res, main = "résidus vs VP_DISPO")
+age<-glm(immobile~VP_DISPO+age, data = mobilite, family = binomial(link = "logit"))
+age0<-glm(immobile~1, x=TRUE, data = mobilite, family = binomial(link = "logit"))
+summary(age)
+wald.test(Sigma = vcov(age), b=coef(age), Terms = 2:5)
+res1<-resid(age)
+plot(mobilite$age, res1, main ="résidus vs age")
+vif(age)
+lrtest(age0, age)
+etude<-glm(immobile~VP_DISPO+age+etabscol, data = mobilite, family = binomial(link = "logit"))
+etude0<-glm(immobile~1, x=TRUE, data = mobilite, family = binomial(link = "logit"))
+summary(etude)
+wald.test(Sigma = vcov(etude), b = coef(etude), Terms = 2:10)
+res2<-resid(etude)
+plot(mobilite$etabscol, res2, main = "résidus vs etude")
+vif(etude)
+lrtest(etude0, etude)
+jour<-glm(immobile~VP_DISPO+age+etabscol+jourdepl, data = mobilite, family = binomial(link = "logit"))
+jour0<-glm(immobile~1, x=TRUE, data = mobilite, family = binomial(link = "logit"))
+summary(jour)
+wald.test(Sigma = vcov(jour), b = coef(jour), Terms = 2:14)
+res3<-resid(jour)
+plot(mobilite$jourdepl, res3, main="résidus vs jour")
+vif(jour)
+lrtest(jour0, jour)
+csp<-glm(immobile~VP_DISPO+age+etabscol+jourdepl+csp, data=mobilite, family = binomial(link = "logit"))
+csp0<-glm(immobile~1, x=TRUE, data = mobilite, family = binomial(link = "logit"))
+summary(csp)
+wald.test(Sigma = vcov(csp), b = coef(csp), Terms = 2:21)
+res4<-resid(csp)
+plot(mobilite$csp, res4, main = "résidus vs csp")
+vif(csp)
+lrtest(csp0, csp)
+sexe<-glm(immobile~VP_DISPO+age+etabscol+jourdepl+csp+sexe, data = mobilite, family = binomial(link = "logit"))
+sexe0<-glm(immobile~1, x=TRUE, data = mobilite, family = binomial(link = "logit"))
+summary(sexe)
+wald.test(Sigma = vcov(sexe), b = coef(sexe), Terms = 2:22)
+res5<-resid(sexe)
+plot(mobilite$sexe, res5, main = "résidus vs sexe")
+vif(sexe)
+lrtest(sexe0, sexe)
+```
+
+##Le choix du modèle
+Pour sélectionner notre modèle final, nous allons utiliser la méthode forward. Cette méthode consiste à sélectionner le modèle le plus efficace. Pour cela, on intègre les variables une par une. On test la significativité de chaque variable. On test également la significativité globale du modèle.  Pour comparer les modèles, on compare les critère d'AIC. Ainsi, on va tester un premier modèle :
+Y=\alpha+\beta X1, avec X1 le nombre de véhicule disponible dans le ménage. Cette variable comporte quatre modalités. Ces modalités sont le fait de ne pas posséder de voiture, le fait de posséder une voiture, le fait de posséder 2 voitures ou le fait de posséder 3 voitures ou plus. Dans ce modèle chaque modalité est significative au seuil de 5%. On retient donc cette variable. Le modèle est globalement significatif puisque le rapport de vraissemblance a une p-valeur de 2.2*10-16. Le critère du AIC vos 5001.3. Ce chiffre n'a pas de signification. Il permet de comparer deux modèle entre eux. Nous allons maintenant, ajouter une variable supplémentaire. On obtient le modèle suivant :
+Y= \alpha+\beta 1X1+\beta 2X2, avec X1 le nombre de véhicule disponible et X2 l'âge. Nous intégrons ici l'âge comme une variable continue. Dans ce modèle toutes les variables sont significatives au seuil de 5%. L'ajout de la variable âge est donc retenue puisqu'elle possède un impact significatif sur le fait d'être immobile. Ce modèle est globalement significatif au seuil de 5%. Le critère du AIC a connu une baisse importante ( 4769.6). Donc l'ajout de la variable âge permet de rendre le modèle plus complet. On ajoute à nouveau une variable supplémentaire. On obtient le nouveau modèle suivant :
+Y= \alpha+ \beta 1X1+\beta 2X2+\beta 3X3, X1 le nombre de véhicule disponible dans le ménage, X2 l'âge et X3 le dernier niveau d'études suivies. L'ajout de X3 réduit la significativité du fait de n'avoir qu'un véhicule disponible. Néanmoins, certaines modalités de cette variable est significative. Ainsi, le fait de ne pas avoir fait d'étude ou d'être en cours de scolarité a un impact significatif sur l'immobilité. On ajoute donc le niveau d'études à notre modèle. Ce modèle est globalement significatif au seuil de 5%. L'ajout de cette variable permet de réduire significativement l'AIC (4701.2). Donc l'ajout de cette variable rend le modèle plus complet. On ajoute à nouveau une variable. On obtient le modèle suivant :
+Y= \alpha+\beta 1X1+\beta 2X2+\beta 3X3+\beta 4X4, X1 le nombre de véhicules disponibles, X2 l'âge, X3 le dernier niveau d'études suivies et X4 le jour du déplacement. L'ajout de la variable X4 permet d'intégrer des modalités significatives supplémentaires. Ainsi, le fait de se déplacer le lundi et le mercredi sont significatifs. On ajoute le jour du déplacement à notre modèle. Ce modèle est globalement significatif au seuil de 5%. L'ajout de cette variable permet de réduire l'AIC (4693.7). L'ajout de cette variable rend le modèle plus complet. On ajoute encore une variable. On obtient le modèle suivant :
+Y=\alpha+\beta 1X1+\beta 2X2+\beta 3X3+\beta 4X4+\beta 5X5, X5 la catégorie socioprofessionnelle. L'ajout de X5 permet d'intégrer des variables significatives supplémentaires. Ainsi, le fait de ne pas répondre ou d'être un apprenti et d'être chômeur sont significatifs. On ajoute les csp à notre modèle. Le modèle est globalement significatif au seuil de 5%. L'ajout de cette variable permet de réduire l'AIC (4639.3). Le modèle devient plus complet. On ajoute la dernière variable que nous avions repéré dans la littérature. On obtient le modèle suivant :
+ Y=\alpha+\beta 1X1+\beta 2X2+\beta 3X3+\beta 4X4+\beta 5X5+\beta 6X6, X6 le sexe de l'individu. Cette variable a un effet significatif sur l'immobilité. On ajoute sexe à notre modèle. Le modèle est globalement significatif au seuil de 5%. L'ajout de cette variable permet de réduire l'AIC (4636.9). Cette dernière variable permet d'obtenir le modèle complet. Ce modèle est :
+ Y=\alpha+\beta 1X1i+\beta 2X2i+\beta 3X3i+\beta 4X4i+\beta 5X5i+\beta 6X6i+\epsilon i
+ 
+##La forme des variables
+Pour étudier la forme des variables, on regarde leurs distributions vis à vis des résidus. La plupart de  nos variables possèdent plusieurs modalités. On ne peut pas identifier leurs formes dans le sens où ces individus sont répartis autours des modalités de l'individus. On n'intègre ces variables sous une forme linéaire. Pour l'âge, la question est plus complexe. En effet, la variable d'âge a été intégrée comme une variable numérique continue. Les résidus de cette variable ne sont pas forcément linéaire. Néanmoins, les résidus des âges peuvent se répartir de façon uniforme, autours d'une bande horizontale. La représentation de l'âge sous une forme linéaire peut-être conservée. Nous garderons donc l'âge sous une forme linéaire.
+
+
+# V)Les résultats
+```{r}
+#Construction du modèles
+immobilite3<-glm(immobile~VP_DISPO+age+etabscol+csp+jourdepl+sexe, data = mobilite, family = binomial(link = "logit"))
+summary(immobilite3)
+#Calcul des Odds ratio
+exp(coefficients(immobilite3))
+library(questionr)
+odds.ratio(immobilite3, confint = 0.95, signif.stars = T)
+```
+Nous commençons par analyser l'impact des différentes variables explicatives sur l'immobilité ou la mobilité des individus en termes de rapport d'odds ratio ( ou « rapport des cotes). Cette notion se rapporte à la fréquence d'un événement donné.  Ainsi un odds ratio correspond au rapport du nombre d'individus  présentant l'événement divisé par le nombre de d'individus ne présentant pas l'événement.  Dans notre cas, on va rapporter, pour chaque variable explicative de notre modèle, le nombre d'individus immobiles associés à une modalité de la variable explicative par rapport au nombre d'individus immobiles d'une modalité de référence de cette même variable explicative. Par exemple, pour la variable VP_DISPO, nous constatons une différence significative entre la proportion d'individus immobiles parmi les individus disposant d'au moins 2 véhicules personnels dans leur ménage (seuil de 1% de risque d'erreur) ou de 1 véhicule (10% de risque d"erreur) et la proportion d'individus immobiles parmi ceux ne disposant d'aucun véhicule. Nous constatons que les odds-ratios sont inférieurs lorsque VP_DISPO > 0 sont inférieurs à 1 ce qui signifie que la proportion des immobiles est significativement moins élevée parmi l'ensemble des individus bénéficiant d'au moins 1 véhicule que celle prévalant cher les individus ne disposant d'aucun véhicule. A titre d'exemple, nous avons un odd-ratio de 0.5 environ pour les individus d'au moins 3 véhicules ou plus ce qui signifie que la côte de succès "d'être immobile" est 2 fois moins élevé chez ces individus (2 fois moins de chances d'être immobile) par rapport aux individus n'ayant aucun véhicule.
+Nous constatons également une différence significative (seuil de 5% de risque) entre les proportion d'immobiles des individus se déplaçant le lundi ou le mercredi par rapport à la proportion d'immobiles des individus se déplaçant les autres jours ouvrés. Le rapport des odd-ratios s'élève à 1.4 pour le lundi puis à  1.37 pour le mercredi ce qui signifie que les côte de succès respectives "d'être" immobile le lundi ou le vendredi sont 40 % et 37 % plus élevées par rapport à la côte de succès d'être immobile le vendredi, jeudi ou mardi.
+Nous observons également des différences de même ordre pour les individus n'ayant suivi aucune études et pour les chômeurs et inactifs. Ainsi, un odd-ratio de 2,54 est obtenu pour les chômeurs et inactifs ce qui signifie que la côte de succès "d'être immobile" est 2,5 fois plus élevé pour un individu appartenant à cette CSP par rapport aux autres CSP. De même, la côte de succès "d'être immobile" est 5,7 fois plus élevé chez les individus n'ayant suivi aucune études par rapport à la côte de succès chez les individus suivant ou ayant suivi un niveau d'études quelconque.
+
+#VI) Conclusion
+
+#VII)Annexes

@@ -1,0 +1,30 @@
+---
+title: "Untitled"
+author: "BLANC Arnaud"
+date: "20 décembre 2019"
+output:
+  word_document: default
+  html_document: default
+---
+
+
+
+
+
+```{r echo=FALSE}
+library(stargazer)
+stargazer(vehicule)
+lrtest(vehicule0, vehicule)
+stargazer(age)
+lrtest(age0, age)
+stargazer(etude)
+lrtest(etude0, etude)
+stargazer(csp)
+lrtest(csp0, csp)
+stargazer(jour)
+lrtest(jour0, jour)
+stargazer(sexe)
+lrtest(sexe0, sexe)
+
+```
+
